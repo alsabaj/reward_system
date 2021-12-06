@@ -30,14 +30,14 @@ php artisan serve
 - Points can be used for new order payment, every 1 point equivalent to USD $0.01.
 
 ### Currency
-Currencies table have name, code and exchange rate parameters. USD is the as default currency.
+Currencies table have name, code and exchange rate parameters. USD is used as the default currency.
 
 ### Users/Customers
-Customers information, current available reward points and their reward history can be viewed from customers page,.
+Customers information, current available reward points and their reward history can be viewed from customers page.
 
 ### Orders
 
-Orders page displays the existing orders as well as add new orders by selecting customer, currency and sales amount. 
+Orders page displays the list of existing orders. New orders can be added by selecting customer, currency and sales amount. There is also a feature to redeem rewards points while adding a new order. 
 
 <ul>
     <li>
@@ -55,8 +55,10 @@ Each customer reward has 'total_points', 'available_points' and 'expiry_date'.
 
 'available_points' represents the remaining points which can be redeemed/used when placing an order. Initially, 'total_points' and 'available_points' are of same value. But 'available_points' will decrease depending on how many points the customer spends. Hence, some reward points may get partially utilized; while some may get fully utilized before their expiry.
 
-'expiry_date' represents when the reward would expire.
+'expiry_date' represents the expiry date/time of the reward.
 
+### Available Points Calculation
+Available Reward Points of a customer is calculated as the sum of available_points from each rewards records, which have expiry_date greater than current date.
 
 ### Rewards Earned Calculation
 Rewards are calculated once the "Mark as Completed" button is pressed. The completion of order and awarding of reward points is done in following steps:

@@ -45,6 +45,7 @@ class OrderController extends Controller
         $order->currency = $currency->code;
         $order->currency_value = $currency->exchange_rate;
 
+        //check if customer want to use the rewards point
         if($request->use_points){
             //convert sales amount to USD
             $amount_to_redeem = $order->sales_amount * $order->currency_value;
@@ -70,11 +71,12 @@ class OrderController extends Controller
             foreach($user_rewards as $user_reward){
                 //if available_points > points_to_redeem, then we only use the reward partially
                 $points_redeemed = min($user_reward->available_points, $points_to_redeem);
-                $points_to_redeem -= $points_redeemed;
 
                 // deduct from available reward points; the reward is either fully used or is used partially if more than required points are available
                 $user_reward->available_points -= $points_redeemed;
                 $user_reward->save();
+
+                $points_to_redeem -= $points_redeemed;
 
                 if($points_to_redeem == 0)
                     break;
