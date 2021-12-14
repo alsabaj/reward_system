@@ -123,7 +123,7 @@ The expiry check of the rewards points is performed by running cron job once in 
 
 
 #### Customers Page:
-![Customers Image 1](https://github.com/alsabaj/reward_system/blob/main/users.png)
+![Customers Image 1](https://github.com/alsabaj/reward_system/blob/main/userlist.png)
 
 #### Orders Page:
 ![Orders Image 2](https://github.com/alsabaj/reward_system/blob/main/orders.png)
