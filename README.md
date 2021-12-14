@@ -88,6 +88,11 @@ Rewards are calculated once the "Mark as Completed" button is pressed. The compl
 
 ### Rewards Expiry Check using daily Cron Job
 
+Artisan Command to expire reward points based on their expiry date
+```bash
+php artisan reward:expire
+```
+
 The expiry check of the rewards points is performed by running cron job once in a day. The action to be executed in cron job consists of following steps:
 
 <ul>
@@ -113,11 +118,6 @@ The expiry check of the rewards points is performed by running cron job once in 
     </ul>
 </ul>
 
-
-Artisan Command to expire reward points based on their expiry date
-```bash
-php artisan reward:expire
-```
 
 ## Screenshots
 
