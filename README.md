@@ -30,11 +30,6 @@ Run:
 php artisan serve
 ```
 
-Command to expire reward points based on their expiry date
-```bash
-php artisan reward:expire
-```
-
 ### Features
 
 - Customers will be rewarded with Points when Sales Order is in “Complete” status.
@@ -84,10 +79,10 @@ Rewards are calculated once the "Mark as Completed" button is pressed. The compl
         New reward record is entered in rewards table.
     </li>
     <li>
-        Status of order is marked as "Completed"
+       The reward amount is credited into the customer.
     </li>
     <li>
-       The reward amount is credited into the customer.
+        Status of order is marked as "Completed"
     </li>
 </ul>
 
@@ -117,6 +112,12 @@ The expiry check of the rewards points is performed by running cron job once in 
         </li>
     </ul>
 </ul>
+
+
+Artisan Command to expire reward points based on their expiry date
+```bash
+php artisan reward:expire
+```
 
 ## Screenshots
 

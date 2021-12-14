@@ -28,8 +28,7 @@ class OrderSeeder extends Seeder
             'expiry_date' => '2020-12-13',
             'is_expired' => 0,
             'reward_points' => 500,
-            'order_id' => 1,
-            'user_id' => 1,
+            'order_id' => 1
         ]);
     }
 }

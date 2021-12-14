@@ -50,8 +50,7 @@ class CheckRewardExpiry extends Command
                 ->where('is_expired', 0)
                 ->sum('reward_points');
             
-            //update user reward points
-            //condition check to balance out used reward points
+            //if user.reward_points <= unexpired_points, then no change in reward point is required
             if($user->reward_points > $unexpired_points){
                 //update user reward points
                 $user->reward_points = $unexpired_points;

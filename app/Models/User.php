@@ -56,10 +56,16 @@ class User extends Authenticatable
     /**
      * Get all of the rewards for the User
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
      */
     public function rewards()
     {
-        return $this->hasMany(Reward::class);
+        return $this->hasManyThrough(Reward::class, Order::class);
+    }
+
+    public function getRewardAmountAttribute()
+    {   
+        //convert reward_points to reward amount in usd
+        return number_format($this->reward_points * 0.01, 2);
     }
 }

@@ -44,25 +44,6 @@ class OrderController extends Controller
         $order->currency = $currency->code;
         $order->currency_value = $currency->exchange_rate;
 
-        //check if customer want to use the rewards point
-        if($request->use_points){
-            //convert sales amount to USD
-            $amount_to_redeem = $order->sales_amount * $order->currency_value;
-
-            //1 point = USD 0.01
-            //1 USD = 100 points
-            $points_to_redeem = $amount_to_redeem * 100;
-
-            //check if reward points can be used
-            if($user->reward_points < $points_to_redeem){
-                flash('Enough points not available')->error();
-                return redirect()->back();
-            }
-            
-            $user->reward_points -= $points_to_redeem;
-            $user->save();
-        }
-
         $order->save();
 
         flash('Order has been added successfully')->success();
@@ -72,6 +53,7 @@ class OrderController extends Controller
 
     public function markAsComplete($order_id){
         $order = Order::findOrFail($order_id);
+        $user = User::findOrFail($order->user_id);
 
         if($order->status != "Pending")
         {
@@ -79,18 +61,16 @@ class OrderController extends Controller
             return redirect()->back();
         }
 
-        $user = User::findOrFail($order->user_id);
+        $reward_amount = $order->calculateRewardPoints();
 
         //Create new reward record
         $reward = new Reward();
         $reward->order_id = $order->id;
-        $reward->user_id = $order->user_id;
         $reward->expiry_date = Carbon::now()->addYears(1)->format('Y-m-d');
-        $reward_amount = $order->calculateRewardPoints();
-
         $reward->reward_points = $reward_amount;
         $reward->save();
 
+        //credit reward points to the user
         $user->reward_points += $reward_amount;
         $user->save();
 

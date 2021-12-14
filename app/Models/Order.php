@@ -24,7 +24,7 @@ class Order extends Model
         $sales_amount = $this->sales_amount;
 
         //value to convert currency to USD 
-        $currency_value = $this->currency_value;
+        $currency_value = $this->currency_value; //->exchange rate at the time of order placement
 
         // convert sales amount to USD and rounded off the result to get reward points.
         $reward_amount = round($sales_amount * $currency_value);
