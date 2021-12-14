@@ -57,7 +57,7 @@ Orders page displays the list of existing orders. New orders can be added by sel
 </ul>
 
 ### Rewards
-Each customer reward has 'reward_points', 'is_expired' and 'expiry_date'. 
+Each reward record has 'reward_points', 'is_expired' and 'expiry_date'. 
 
 'reward_points' represents the amount of points earned from a completed order. 
 
