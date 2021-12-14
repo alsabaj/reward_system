@@ -20,10 +20,10 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Order</th>
                         <th data-breakpoints="md">Total Points Earned</th>
-                        <th data-breakpoints="md">Used Points</th>
-                        <th data-breakpoints="md">Remaining Points</th>
                         <th data-breakpoints="md">Expiry Date</th>
+                        <th data-breakpoints="md">Status</th>
                         
                         {{-- <th class="text-right" width="15%"></th> --}}
                     </tr>
@@ -35,16 +35,16 @@
                             {{ $loop->iteration }}
                         </td>
                         <td>
-                            {{ $reward->total_points }}
+                            {{ $reward->order->title }}
                         </td>
                         <td>
-                            {{ $reward->total_points - $reward->available_points }}
+                            {{ $reward->reward_points }}
                         </td>
                         <td>
-                            {{ $reward->available_points }}
+                            {{ date('M j, Y', strtotime($reward->expiry_date)) }}
                         </td>
                         <td>
-                            {{ date('M j Y, h:m A', strtotime($reward->expiry_date)) }}
+                            <span class="badge {{ $reward->is_expired ? 'badge-danger' : 'badge-success' }}" style="width: unset">{{ $reward->is_expired ? 'Expired' : 'Active' }}</span>
                         </td>
                     </tr>
                     @endforeach

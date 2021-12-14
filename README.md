@@ -14,12 +14,25 @@ composer install
 
 Create a new database in MySQL database named 'reward_system'.
 
-Now import the SQL file named 'reward_system.sql' which is located in the root folder.
+Migrate:
+```bash
+php artisan migrate
+```
+
+Seed:
+```bash
+php artisan db:seed
+```
 
 Run:
 
 ```bash
 php artisan serve
+```
+
+Command to expire reward points based on their expiry date
+```bash
+php artisan reward:expire
 ```
 
 ### Features
@@ -32,12 +45,12 @@ php artisan serve
 ### Currency
 Currencies table have name, code and exchange rate parameters. USD is used as the default currency.
 
-### Users/Customers
-Customers information, current available reward points and their reward history can be viewed from customers page.
+### Customers
+Customers information, current reward points and their reward history can be viewed from customers page.
 
 ### Orders
 
-Orders page displays the list of existing orders. New orders can be added by selecting customer, currency and sales amount. There is also a feature to redeem rewards points while adding a new order. 
+Orders page displays the list of existing orders. New orders can be added by selecting customer, currency and sales amount.
 
 <ul>
     <li>
@@ -49,23 +62,20 @@ Orders page displays the list of existing orders. New orders can be added by sel
 </ul>
 
 ### Rewards
-Each customer reward has 'total_points', 'available_points' and 'expiry_date'. 
+Each customer reward has 'reward_points', 'is_expired' and 'expiry_date'. 
 
-'total_points' represents the amount of points earned from a completed order. 
+'reward_points' represents the amount of points earned from a completed order. 
 
-'available_points' represents the remaining points which can be redeemed/used when placing an order. Initially, 'total_points' and 'available_points' are of same value. But 'available_points' will decrease depending on how many points the customer spends. Hence, some reward points may get partially utilized; while some may get fully utilized before their expiry.
+'is_expired' represents whether the reward has expired or not.
 
-'expiry_date' represents the expiry date/time of the reward.
-
-### Available Points Calculation
-Available Reward Points of a customer is calculated as the sum of available_points from each rewards records, which have expiry_date greater than current date.
+'expiry_date' represents the expiry date of the reward.
 
 ### Rewards Earned Calculation
 Rewards are calculated once the "Mark as Completed" button is pressed. The completion of order and awarding of reward points is done in following steps:
 
 <ul>
     <li>
-        Reward points is calculated from sales amount using currency conversion factor obtained from currencies table. 
+        Reward points is calculated from sales amount using currency conversion factor. 
     </li>
     <li>
         Reward expiry date is evaluated by adding a year to current date. 
@@ -76,28 +86,36 @@ Rewards are calculated once the "Mark as Completed" button is pressed. The compl
     <li>
         Status of order is marked as "Completed"
     </li>
+    <li>
+       The reward amount is credited into the customer.
+    </li>
 </ul>
 
-### Rewards Spent Calculation
+### Rewards Expiry Check using daily Cron Job
 
-When the customer chooses to use of their reward point to place an order, the following steps are performed:
+The expiry check of the rewards points is performed by running cron job once in a day. The action to be executed in cron job consists of following steps:
 
 <ul>
     <li>
-        Calculate points equivalent to order's sales amount. 
+        Get all customers from users table.
     </li>
     <li>
-        Get the current available points in customer's account. If the customer doesn't have enough points, then the transaction is terminated with an error message.
+       For each customers repeat following the steps:
     </li>
-    <li>
-       Get the customer's all available and unexpired rewards, which have points available for redemption. The rewards are fetched in ascending order of expiry date, so that the older rewards get utilized first.
-    </li>
-    <li>
-        Loop through each rewards and deduct from available_points of each reward until all the points required for the transaction have been redeemed.
-    </li>
-    <li>
-        Create new order for the customer.
-    </li>
+    <ul>
+        <li>
+            Calculate the sum of customer's unexpired reward points that have expiry_date greater than current date.
+        </li>
+        <li>
+            If the customer's reward points is greater than their unexpired points, then replace their reward points with their unexpired points.
+        </li>
+        <li>
+            Update customers reward points in the database.
+        </li>
+        <li>
+            Set 'is_expired' value to 'true' for the unexpired reward records that have expiry date less than or equal to current date.
+        </li>
+    </ul>
 </ul>
 
 ## Screenshots

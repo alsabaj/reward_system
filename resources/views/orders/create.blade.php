@@ -20,6 +20,15 @@
                 	@csrf
                     
                     <div class="form-group row">
+                        <label class="col-md-3 col-form-label">Order Title
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" placeholder="e.g. Order for PC" name="title" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
                         <label class="col-md-3 col-from-label">
                             Customer
                             <span class="text-danger">*</span>
@@ -28,7 +37,7 @@
                             <select class="form-control aiz-selectpicker" id="user_id" name="user_id" data-live-search="true" required>
                                 <option disabled selected value="">Choose customer</option>
                                 @foreach ($users as $user)
-                                    <option value="{{ $user->id }}" data-available_points="{{ $user->available_points }}">
+                                    <option value="{{ $user->id }}" data-available_points="{{ $user->reward_points }}">
                                         {{ $user->name }}
                                     </option>
                                 @endforeach
@@ -62,7 +71,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group row" id="use_points" hidden>
+                    {{-- <div class="form-group row" id="use_points" hidden>
                         <div class="col-md-3 col-form-label">
                             
                         </div>
@@ -74,7 +83,7 @@
                                 <span class="ml-2">Use Reward Points</span>
                             </label>
                         </div>
-                    </div>
+                    </div> --}}
                     
                     <div class="form-group mb-0 text-right">
                         <button type="submit" class="btn btn-success">

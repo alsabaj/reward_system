@@ -62,8 +62,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reward::class);
     }
-
-    public function getAvailablePointsAttribute() {
-        return $this->rewards()->where('expiry_date','>',Carbon::now())->sum('available_points');
-    }
 }

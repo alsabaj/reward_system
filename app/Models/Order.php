@@ -18,4 +18,17 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function calculateRewardPoints() {
+        //sales amount of order
+        $sales_amount = $this->sales_amount;
+
+        //value to convert currency to USD 
+        $currency_value = $this->currency_value;
+
+        // convert sales amount to USD and rounded off the result to get reward points.
+        $reward_amount = round($sales_amount * $currency_value);
+
+        return $reward_amount;
+    }
 }

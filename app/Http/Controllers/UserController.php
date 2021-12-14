@@ -21,7 +21,6 @@ class UserController extends Controller
 
     public function rewards($user_id, Request $request)
     {
-
         $user = User::findOrFail($user_id);
         $rewards = $user->rewards()->orderBy('id', 'desc')->get();
 

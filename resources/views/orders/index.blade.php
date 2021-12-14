@@ -28,6 +28,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th data-breakpoints="md">Order</th>
                         <th data-breakpoints="md">Customer</th>
                         <th data-breakpoints="md">Sales Amount</th>
                         <th data-breakpoints="md">Status</th>
@@ -39,7 +40,10 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td>
-                                INV-{{ $order->id }}
+                                {{ $loop->iteration }}
+                            </td>
+                            <td>
+                                {{ $order->title }}
                             </td>
                             <td>
                                 {{ $order->user->name }}
@@ -48,7 +52,7 @@
                                 {{ $order->currency }} {{ $order->sales_amount }}
                             </td>
                             <td>
-                                {{ $order->status }}
+                                <span class="badge {{ $order->status == 'Pending' ? 'badge-warning' : 'badge-success' }}" style="width: unset">{{ $order->status }}</span>
                             </td>
                             
                             <td class="text-right">

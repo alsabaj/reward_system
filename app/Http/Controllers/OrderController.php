@@ -20,15 +20,13 @@ class OrderController extends Controller
 
     public function create(){
         $users = User::orderBy('name', 'asc')->get();
-        $users->map(function($user){
-            $user->append('available_points');
-        });
         $currencies = Currency::get();
         return view('orders.create', compact('users', 'currencies'));
     }
 
     public function store(Request $request){
         $request->validate([
+            'title' => 'required',
             'user_id' => 'required|exists:users,id',
             'currency_id' => 'required|exists:currencies,id',
             'sales_amount' => 'required|numeric|min:0'
@@ -39,6 +37,7 @@ class OrderController extends Controller
 
         //Create new Order
         $order = new Order;
+        $order->title = $request->title;
         $order->user_id = $user->id;
         $order->sales_amount = round($request->sales_amount, 2);
         $order->status = "Pending";
@@ -54,33 +53,14 @@ class OrderController extends Controller
             //1 USD = 100 points
             $points_to_redeem = $amount_to_redeem * 100;
 
-            $user = User::findOrFail($order->user_id);
-            
-            //Get User's Current Available Reward Points
-            $available_points = $user->rewards()->where('expiry_date','>',Carbon::now())->sum('available_points');
-
             //check if reward points can be used
-            if($available_points < $points_to_redeem){
+            if($user->reward_points < $points_to_redeem){
                 flash('Enough points not available')->error();
                 return redirect()->back();
             }
             
-            //get all available, unexpired Points, which has amount available for redemption, in ascending order of expiry date.
-            $user_rewards = $user->rewards()->where('expiry_date','>',Carbon::now())->where('available_points','>', 0)->orderBy('expiry_date', 'asc')->get();
-            
-            foreach($user_rewards as $user_reward){
-                //if available_points > points_to_redeem, then we only use the reward partially
-                $points_redeemed = min($user_reward->available_points, $points_to_redeem);
-
-                // deduct from available reward points; the reward is either fully used or is used partially if more than required points are available
-                $user_reward->available_points -= $points_redeemed;
-                $user_reward->save();
-
-                $points_to_redeem -= $points_redeemed;
-
-                if($points_to_redeem == 0)
-                    break;
-            }
+            $user->reward_points -= $points_to_redeem;
+            $user->save();
         }
 
         $order->save();
@@ -95,22 +75,24 @@ class OrderController extends Controller
 
         if($order->status != "Pending")
         {
-            flash('Order has already been Completed.')->error();   
+            flash('Order status cannot be updated')->error();   
             return redirect()->back();
         }
+
+        $user = User::findOrFail($order->user_id);
 
         //Create new reward record
         $reward = new Reward();
         $reward->order_id = $order->id;
         $reward->user_id = $order->user_id;
-        $reward->expiry_date = Carbon::now()->addYears(1);
+        $reward->expiry_date = Carbon::now()->addYears(1)->format('Y-m-d');
+        $reward_amount = $order->calculateRewardPoints();
 
-        // convert sales amount to USD and rounded off the result to get reward points.
-        $reward_amount = round($order->sales_amount * $order->currency_value);
-
-        $reward->total_points = $reward_amount;
-        $reward->available_points = $reward_amount;
+        $reward->reward_points = $reward_amount;
         $reward->save();
+
+        $user->reward_points += $reward_amount;
+        $user->save();
 
         //set order status to completed
         $order->status = "Completed";

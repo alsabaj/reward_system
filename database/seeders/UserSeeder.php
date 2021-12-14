@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'name' => 'User 1',
             'email' => 'user1@user.com',
             'password' => Hash::make('password'),
+            'reward_points' => 500,
         ]);
         \DB::table('users')->insert([
             'name' => 'User 2',

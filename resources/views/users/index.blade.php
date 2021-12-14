@@ -16,7 +16,7 @@
                     <tr>
                         <th>#</th>
                         <th data-breakpoints="md">Name</th>
-                        <th data-breakpoints="md">Available Points</th>
+                        <th data-breakpoints="md">Reward Points</th>
                         
                         <th class="text-right" width="20%"></th>
                     </tr>
@@ -31,7 +31,7 @@
                             {{ $user->name }}
                         </td>
                         <td>
-                            {{ $user->available_points }}
+                            {{ $user->reward_points }}
                         </td>
                         
                         <td class="text-right">
